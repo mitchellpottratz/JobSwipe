@@ -23,7 +23,10 @@ def after_request(response):
     g.db.close()
     return response
 
-server.start()
+
+if __name__ == '__main__':
+    database.initialize_tables()
+    server.start()  
 
 
 
