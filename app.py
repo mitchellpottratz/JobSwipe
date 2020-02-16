@@ -1,10 +1,12 @@
 from server import Server 
+from database import Database
 
 
-def run_server():
-    server = Server([])
-    server.start()
+# creates instances of the server and database
+server = Server([])
+database = Database([])
 
-run_server()
+server.start()
+
 
 
