@@ -1,7 +1,6 @@
 import os
 from flask import Flask
 
-
 # allows flask to access enviroment variables
 from dotenv import load_dotenv
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env') 
@@ -16,6 +15,7 @@ class Server:
         self.PORT = os.environ['PORT']
         self.origin = self.set_origin()    
         self.app.secret_key = os.environ['SECRET_KEY']
+        self.blueprints = blueprints
 
     # sets the origin to either development or production depending on 
     # if DEBUG is set to true
