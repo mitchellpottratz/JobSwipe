@@ -30,8 +30,6 @@ class Server:
         # registers all of the blueprints
         self.register_blueprints()
 
-
-
     # sets the origin to either development or production depending on 
     # if DEBUG is set to true
     def set_origin(self):

@@ -1,4 +1,7 @@
 from flask import g
+from flask_login import current_user
+from peewee import DoesNotExist
+
 from server import Server 
 from database import Database
 
@@ -14,8 +17,17 @@ server = Server([])
 database = Database([BaseModel, User, CandidateUser, CompanyUser])
 
 
-# gets the flask app object from the server so it can be used as a decorator
+# gets the app and login_manager object from the server so it can be used as a decorator
 app = server.app
+login_manager = server.login_manager
+
+# required by flask_login for loading users
+@login_manager.user_loader
+def load_user(user_id):
+    try:
+        return User.get(User.id == user_id)
+    except DoesNotExist:
+        return None
 
 # established connection to the database before every request
 @app.before_request
