@@ -17,6 +17,9 @@ class Server:
         self.app.secret_key = os.environ['SECRET_KEY']
         self.blueprints = blueprints
 
+        # sets the directory to where file are uploaded
+        self.app.config['UPLOAD_FOLDER'] = '/media'
+
     # sets the origin to either development or production depending on 
     # if DEBUG is set to true
     def set_origin(self):
