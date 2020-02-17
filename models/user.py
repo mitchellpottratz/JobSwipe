@@ -1,4 +1,3 @@
-import datetime
 from peewee import *
 from .base import BaseModel
 from flask_login import UserMixin

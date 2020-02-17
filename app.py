@@ -5,11 +5,12 @@ from database import Database
 # imports models here
 from models.base import BaseModel
 from models.user import User
+from models.candidate_user import CandidateUser
 
 
 # creates instances of the server and database
 server = Server([])
-database = Database([BaseModel, User])
+database = Database([BaseModel, User, CandidateUser])
 
 
 # gets the flask app object from the server so it can be used as a decorator
