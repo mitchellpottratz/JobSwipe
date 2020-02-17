@@ -2,10 +2,13 @@ from flask import g
 from server import Server 
 from database import Database
 
+# imports models here
+from models.base import BaseModel
+
 
 # creates instances of the server and database
 server = Server([])
-database = Database([])
+database = Database([BaseModel])
 
 
 # gets the flask app object from the server so it can be used as a decorator
