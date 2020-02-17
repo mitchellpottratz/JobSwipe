@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask_login import LoginManager
+from flask_cors import CORS
 
 # allows flask to access enviroment variables
 from dotenv import load_dotenv
@@ -26,6 +27,9 @@ class Server:
         # sets the directory to where files are uploaded
         self.app.config['UPLOAD_FOLDER'] = '/media'
 
+        # registers all of the blueprints
+        self.register_blueprints()
+
 
 
     # sets the origin to either development or production depending on 
@@ -38,6 +42,12 @@ class Server:
 
     def configure_login_manager(self):
         self.login_manager.init_app(self.app)
+
+    # registers all of the blueprints and configures cors for them
+    def register_blueprints(self):
+        for blueprint in self.blueprints:
+            self.app.register_blueprint(blueprint[0], url_prefix=blueprint[1])
+            CORS(blueprint[0], origins=[self.origin], supports_credentials=True)
 
     def start(self): 
         self.app.run(debug=self.DEBUG, port=self.PORT)
