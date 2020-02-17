@@ -1,7 +1,7 @@
 import datetime
 from peewee import *
 
-DATABASE = SqliteDatabase('foodsite.sqlite')
+DATABASE = SqliteDatabase('jobswipe.sqlite')
 
 '''
 All other models inherit from this model. The base model establishes the 
