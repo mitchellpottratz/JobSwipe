@@ -10,6 +10,7 @@ and CompanyUser models which inherit from this class
 '''
 
 class User(BaseModel, UserMixin):
+    image = CharField(max_length=500)
     first_name = CharField(max_length=55)
     last_name = CharField(max_length=55)
     email = CharField(max_length=155)
