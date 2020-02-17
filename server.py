@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_login import LoginManager
 
 # allows flask to access enviroment variables
 from dotenv import load_dotenv
@@ -14,11 +15,18 @@ class Server:
         self.DEBUG = os.environ['DEBUG']
         self.PORT = os.environ['PORT']
         self.origin = self.set_origin()    
-        self.app.secret_key = os.environ['SECRET_KEY']
         self.blueprints = blueprints
 
-        # sets the directory to where file are uploaded
+        # configures the flask login manager
+        self.login_manager = LoginManager()
+        self.configure_login_manager()
+
+        self.app.secret_key = os.environ['SECRET_KEY']
+
+        # sets the directory to where files are uploaded
         self.app.config['UPLOAD_FOLDER'] = '/media'
+
+
 
     # sets the origin to either development or production depending on 
     # if DEBUG is set to true
@@ -27,6 +35,9 @@ class Server:
             return os.environ['DEVELOPMENT_ORIGIN']
         else:
             return os.environ['PRODUCTON_ORIGIN']
+
+    def configure_login_manager(self):
+        self.login_manager.init_app(self.app)
 
     def start(self): 
         self.app.run(debug=self.DEBUG, port=self.PORT)
