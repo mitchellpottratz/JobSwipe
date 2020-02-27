@@ -11,12 +11,12 @@ load_dotenv(dotenv_path)
 
 class Server:
 
-    def __init__(self, blueprints):
+    def __init__(self, resources):
         self.app = Flask(__name__)
         self.DEBUG = os.environ['DEBUG']
         self.PORT = os.environ['PORT']
         self.origin = self.set_origin()    
-        self.blueprints = blueprints
+        self.resources = resources
 
         # configures the flask login manager
         self.login_manager = LoginManager()
@@ -27,8 +27,8 @@ class Server:
         # sets the directory to where files are uploaded
         self.app.config['UPLOAD_FOLDER'] = '/media'
 
-        # registers all of the blueprints
-        self.register_blueprints()
+        # registers all of the resources
+        self.register_resources()
 
     # sets the origin to either development or production depending on 
     # if DEBUG is set to true
@@ -41,11 +41,15 @@ class Server:
     def configure_login_manager(self):
         self.login_manager.init_app(self.app)
 
+    def register_resources(self):
+        for resource in self.resources:
+            self.app.add_url_rule('/api/v1' + resource.path, view_func=resource.as_view(resource.view_name))
+
     # registers all of the blueprints and configures cors for them
-    def register_blueprints(self):
-        for blueprint in self.blueprints:
-            self.app.register_blueprint(blueprint[0], url_prefix=blueprint[1])
-            CORS(blueprint[0], origins=[self.origin], supports_credentials=True)
+    # def register_blueprints(self):
+    #     for blueprint in self.blueprints:
+    #         self.app.register_blueprint(blueprint[0], url_prefix=blueprint[1])
+    #         CORS(blueprint[0], origins=[self.origin], supports_credentials=True)
 
     def start(self): 
         self.app.run(debug=self.DEBUG, port=self.PORT)

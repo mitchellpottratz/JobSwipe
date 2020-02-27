@@ -11,9 +11,12 @@ from models.user import User
 from models.candidate_user import CandidateUser
 from models.company_user import CompanyUser
 
+# resource imports
+from resources.users import *
+
 
 # creates instances of the server and database
-server = Server([])
+server = Server([Ping])
 database = Database([BaseModel, User, CandidateUser, CompanyUser])
 
 
