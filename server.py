@@ -45,12 +45,6 @@ class Server:
         for resource in self.resources:
             self.app.add_url_rule('/api/v1' + resource.path, view_func=resource.as_view(resource.view_name))
 
-    # registers all of the blueprints and configures cors for them
-    # def register_blueprints(self):
-    #     for blueprint in self.blueprints:
-    #         self.app.register_blueprint(blueprint[0], url_prefix=blueprint[1])
-    #         CORS(blueprint[0], origins=[self.origin], supports_credentials=True)
-
     def start(self): 
         self.app.run(debug=self.DEBUG, port=self.PORT)
         print("Server is running on port", self.PORT)
