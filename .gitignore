@@ -2,3 +2,4 @@ venv
 .env
 jobswipe.sqlite
 __pycache__
+media
