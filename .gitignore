@@ -1,3 +1,4 @@
 venv
 .env
 jobswipe.sqlite
+__pycache__
