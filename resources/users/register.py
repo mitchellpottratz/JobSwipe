@@ -4,6 +4,7 @@ from flask.views import View
 from playhouse.shortcuts import model_to_dict
 from peewee import DoesNotExist
 from werkzeug.utils import secure_filename
+from flask_bcrypt import generate_password_hash
 
 from models.user import User
 from models.company_user import CompanyUser
@@ -18,6 +19,7 @@ class Register(View):
     methods = ['POST']
 
     RELATIVE_IMAGE_UPLOAD_FOLDER = '/../../media/profile_pictures/'
+    uploaded_images_path = ''
 
     def dispatch_request(self):
         data = request.form
@@ -41,19 +43,26 @@ class Register(View):
                 self.register_company_user(data)
             
 
-    def register_company_user(self):
-        pass
+    def register_company_user(self, data):
+        data['password'] = generate_password_hash(data['password'])
+
+        new_company_user = CompanyUser.create(**data)
+        new_company_user.generate_email_confirmation_code()
+        new_company_user.save()
+
+        self.
+
 
     def handle_profile_image_upload(self):
         # gets the image from the form data if it exists
         if 'image' in request.files:
-            image = request.files['image']
+            self.uploaded_images_path = request.files['image']
         else: 
-            image = ''
+            self.uploaded_images_path = ''
 
         # uploads the users profile image
-        image_name = secure_filename(image.filename)
-        image.save(os.path.dirname(__file__) + self.RELATIVE_IMAGE_UPLOAD_FOLDER + image_name)
+        image_name = secure_filename(self.uploaded_images_path.filename)
+        self.uploaded_images_path.save(os.path.dirname(__file__) + self.RELATIVE_IMAGE_UPLOAD_FOLDER + image_name)
 
         
 
