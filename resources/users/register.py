@@ -6,6 +6,9 @@ from peewee import DoesNotExist
 from werkzeug.utils import secure_filename
 from flask_bcrypt import generate_password_hash
 
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
 from models.user import User
 from models.company_user import CompanyUser
 from models.candidate_user import CandidateUser
@@ -68,6 +71,9 @@ class Register(View):
                     del new_candidate_user_dict['password']
                     response_data = new_candidate_user_dict
 
+                # send a confirmation email to the new user
+                self.send_confirmation_email(response_data)
+
             return jsonify(
                 data=response_data,
                 status={
@@ -113,6 +119,26 @@ class Register(View):
         image.save(
             os.path.dirname(__file__) + self.RELATIVE_IMAGE_UPLOAD_FOLDER + self.uploaded_images_name
         )
+
+
+    def send_confirmation_email(self, user):
+        try:
+            email = Mail(
+                from_email=os.environ.get('EMAIL_ADDRESS'),
+                to_emails=user['email'],
+                subject='test confirmation email',
+                html_content='<strong>Please confirm your email address</strong>'
+            )
+
+            mail_client = SendGridAPIClient(os.environ.get('SEND_GRID_MAIL_API_KEY'))
+            response = mail_client.send(email)
+
+            print('send grid response:', response)
+
+        except Exception as e:
+            print('exception occurred while sending email:', e) 
+
+
 
         
 
