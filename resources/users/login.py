@@ -46,11 +46,23 @@ class Login(View):
             except DoesNotExist:
                 return Login.incorrect_email_or_password_json_response()
 
+
     # logs in either a candidate user or company user
     def login(self, user, password_to_check):
 
         # if the password matches
         if check_password_hash(user.password, password_to_check):
+
+            # if the user has not confirmed their email address
+            if not user.email_confirmed:
+                return jsonify(
+                    data={},
+                    status={
+                        'code': 401,
+                        'message': 'You need to confirm your email address.'
+                    }
+                )
+
             login_user(user)
 
             user_dict = model_to_dict(user)
