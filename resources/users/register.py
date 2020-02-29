@@ -21,15 +21,13 @@ class Register(View):
     RELATIVE_IMAGE_UPLOAD_FOLDER = '/../../media/profile_pictures/'
     uploaded_images_name = ''
 
+
     def dispatch_request(self):
         data = request.form.to_dict()
 
-
-
+        # checks if a candidate user already exists
         try:
-            # checks if the provideded email already exists for a company or candidate user
-            if (not CompanyUser.get(CompanyUser.email == data['email'])) and (not CandidateUser.get(CandidateUser.email == data['email'])):
-                raise DoesNotExist()
+            CandidateUser.get(CandidateUser.email == data['email'])
 
             return jsonify(
                 data={},
@@ -38,32 +36,46 @@ class Register(View):
                     'message': 'Email already exists.'
                 }
             )
-
-        # if a user with the email does not already exist
+        
+        # if the email does exists for a candidate user
         except DoesNotExist:
-            print('user does not already exists')
 
-            # since company users and candidate users use different models they need to be
-            # created individually
-            if data['is_company_user'] == 'True':      
-                new_company_user = self.register_company_user(data)
-                new_company_user_dict = model_to_dict(new_company_user)
-                del new_company_user_dict['password']
-                response_data = new_company_user_dict
-            else:
-                new_candidate_user = self.register_candidate_user(data)
-                new_candidate_user_dict = model_to_dict(new_candidate_user)
-                del new_candidate_user_dict['password']
-                response_data = new_candidate_user_dict
+            # checks if a company user already exists
+            try: 
+                CompanyUser.get(CompanyUser.email == data['email'])
+
+                return jsonify(
+                    data={},
+                    status={
+                        'code': 409,
+                        'message': 'Email already exists.'
+                    }
+                )    
+
+            # if the email doesnt exists for a company user
+            except DoesNotExist: 
+
+                # since company users and candidate users use different models they need to be
+                # created individually
+                if data['is_company_user'] == 'True':      
+                    new_company_user = self.register_company_user(data)
+                    new_company_user_dict = model_to_dict(new_company_user)
+                    del new_company_user_dict['password']
+                    response_data = new_company_user_dict
+                else:
+                    new_candidate_user = self.register_candidate_user(data)
+                    new_candidate_user_dict = model_to_dict(new_candidate_user)
+                    del new_candidate_user_dict['password']
+                    response_data = new_candidate_user_dict
 
             return jsonify(
-                data=new_company_user_dict,
+                data=response_data,
                 status={
                     'code': 201,
                     'message': 'Resource created successfully.'
                 }
             )
-
+                
 
     def register_company_user(self, data):
         data['password'] = generate_password_hash(data['password'])
