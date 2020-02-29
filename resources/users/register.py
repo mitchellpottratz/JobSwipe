@@ -19,13 +19,17 @@ class Register(View):
     methods = ['POST']
 
     RELATIVE_IMAGE_UPLOAD_FOLDER = '/../../media/profile_pictures/'
-    uploaded_images_path = ''
+    uploaded_images_name = ''
 
     def dispatch_request(self):
-        data = request.form
+        data = request.form.to_dict()
+
+
 
         try:
-            user = User.get(User.email == data['email'])
+            # checks if the provideded email already exists for a company or candidate user
+            if (not CompanyUser.get(CompanyUser.email == data['email'])) and (not CandidateUser.get(CandidateUser.email == data['email'])):
+                raise DoesNotExist()
 
             return jsonify(
                 data={},
@@ -37,23 +41,29 @@ class Register(View):
 
         # if a user with the email does not already exist
         except DoesNotExist:
+            print('user does not already exists')
 
             # since company users and candidate users use different models they need to be
             # created individually
-            if data['is_company_user']:      
+            if data['is_company_user'] == 'True':      
                 new_company_user = self.register_company_user(data)
-                response_data = new_company_user
+                new_company_user_dict = model_to_dict(new_company_user)
+                del new_company_user_dict['password']
+                response_data = new_company_user_dict
             else:
                 new_candidate_user = self.register_candidate_user(data)
-                response_data = new_candidate_user
+                new_candidate_user_dict = model_to_dict(new_candidate_user)
+                del new_candidate_user_dict['password']
+                response_data = new_candidate_user_dict
 
             return jsonify(
-                data=response_data,
+                data=new_company_user_dict,
                 status={
                     'code': 201,
                     'message': 'Resource created successfully.'
                 }
             )
+
 
     def register_company_user(self, data):
         data['password'] = generate_password_hash(data['password'])
@@ -61,7 +71,7 @@ class Register(View):
         new_company_user = CompanyUser.create(**data)
         new_company_user.generate_email_confirmation_code()
         self.handle_profile_image_upload()
-        new_company_user.image = self.uploaded_images_path
+        new_company_user.image = self.uploaded_images_name
         new_company_user.save()
 
         return new_company_user
@@ -73,7 +83,7 @@ class Register(View):
         new_candidate_user = CandidateUser.create(**data)
         new_candidate_user.generate_email_confirmation_code()
         self.handle_profile_image_upload()
-        new_candidate_user.image = self.uploaded_images_path
+        new_candidate_user.image = self.uploaded_images_name
         new_candidate_user.save()
 
         return new_candidate_user
@@ -82,13 +92,15 @@ class Register(View):
     def handle_profile_image_upload(self):
         # gets the image from the form data if it exists
         if 'image' in request.files:
-            self.uploaded_images_path = request.files['image']
+            image = request.files['image']
         else: 
-            self.uploaded_images_path = ''
+            image = ''
 
         # uploads the users profile image
-        image_name = secure_filename(self.uploaded_images_path.filename)
-        self.uploaded_images_path.save(os.path.dirname(__file__) + self.RELATIVE_IMAGE_UPLOAD_FOLDER + image_name)
+        self.uploaded_images_name = str(secure_filename(image.filename))
+        image.save(
+            os.path.dirname(__file__) + self.RELATIVE_IMAGE_UPLOAD_FOLDER + self.uploaded_images_name
+        )
 
         
 
