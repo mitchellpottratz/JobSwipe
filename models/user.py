@@ -25,7 +25,7 @@ class User(BaseModel, UserMixin):
     def generate_email_confirmation_code(self):
         confirmation_code_list = []
         for i in range(1, 15):
-            confirmation_code_list.append(str(random.randint(1, 10)))
+            confirmation_code_list.append(str(random.randint(1, 9)))
 
         self.email_confirmation_code = ''.join(confirmation_code_list)
        

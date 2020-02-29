@@ -46,7 +46,8 @@ class Server:
             self.app.add_url_rule('/api/v1' + resource.path, view_func=resource.as_view(resource.view_name))
 
     def start(self): 
-        self.app.run(debug=self.DEBUG, port=self.PORT)
         print("Server is running on port", self.PORT)
+        self.app.run(debug=self.DEBUG, port=self.PORT)
+        
 
     
