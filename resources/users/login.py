@@ -27,7 +27,7 @@ class Login(View):
             try:
                 candidate_user = CandidateUser.get(CandidateUser.email == data['email'])
 
-                # logs in the candidate user
+                # logs in the candidate user and returns the response
                 response = self.login(candidate_user, data['password'])
                 return response
 
@@ -39,10 +39,29 @@ class Login(View):
                         'message': 'Email or password is incorrect.'
                     }
                 )
-        
+
+        # if the user logging in is a company user
+        else:
+            try:
+                company_user = CompanyUser.get(CompanyUser.email == data['email'])
+
+                # logs in the candidate user and returns the response
+                response = self.login(company_user, data['password'])
+                return response
+                
+            except DoesNotExist:
+                return jsonify(
+                    data={},
+                    status={
+                        'code': 404,
+                        'message': 'Email or password is incorrect.'
+                    }
+                )
 
     # logs in either a candidate user or company user
     def login(self, user, password_to_check):
+
+        # if the password matches
         if check_password_hash(user.password, password_to_check):
             login_user(user)
 
@@ -54,5 +73,15 @@ class Login(View):
                 status={
                     'code': 200,
                     'message': 'Successfully logged in.'
+                }
+            )
+
+        # otherwise if the password does not match
+        else:
+            return jsonify(
+                data={},
+                status={
+                    'code': 404,
+                    'message': 'Email or password is incorrect.'
                 }
             )
