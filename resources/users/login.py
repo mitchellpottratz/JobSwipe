@@ -11,6 +11,8 @@ from models.company_user import CompanyUser
 from models.candidate_user import CandidateUser
 
 
+# Login Route
+# this route logs in either a canidate user or company user
 class Login(View):
     path = '/users/login'
     view_name = 'users_login'
@@ -19,26 +21,15 @@ class Login(View):
     
     def dispatch_request(self):
         data = request.get_json()
-        print('data:', data)
-        print('type of:', type(data))
-
+    
+        # if the user loggin in is a candidate user
         if data['is_candidate_user'] == 'True':
             try:
                 candidate_user = CandidateUser.get(CandidateUser.email == data['email'])
 
-                if check_password_hash(candidate_user.password, data['password']):
-                    login_user(candidate_user)
-
-                    candidate_user_dict = model_to_dict(candidate_user)
-                    del candidate_user_dict['password']
-
-                    return jsonify(
-                        data=candidate_user_dict,
-                        status={
-                            'code': 200,
-                            'message': 'Successfully logged in.'
-                        }
-                    )
+                # logs in the candidate user
+                response = self.login(candidate_user, data['password'])
+                return response
 
             except DoesNotExist:
                 return jsonify(
@@ -48,14 +39,20 @@ class Login(View):
                         'message': 'Email or password is incorrect.'
                     }
                 )
-
         
 
-            
+    # logs in either a candidate user or company user
+    def login(self, user, password_to_check):
+        if check_password_hash(user.password, password_to_check):
+            login_user(user)
 
-        return jsonify(
-            status={
-                'code': 200,
-                'message': 'Resource is working.'
-            }
-        )
+            user_dict = model_to_dict(user)
+            del user_dict['password']    
+
+            return jsonify(
+                data=user_dict,
+                status={
+                    'code': 200,
+                    'message': 'Successfully logged in.'
+                }
+            )
