@@ -32,7 +32,13 @@ class Login(View):
                 return response
 
             except DoesNotExist:
-                return Login.incorrect_email_or_password_json_response()
+                return jsonify(
+                    data={},
+                    status={
+                        'code': 404,
+                        'message': 'Email or password is incorrect.'
+                    }
+                )
 
         # if the user logging in is a company user
         else:
@@ -44,7 +50,13 @@ class Login(View):
                 return response
                 
             except DoesNotExist:
-                return Login.incorrect_email_or_password_json_response()
+                return jsonify(
+                    data={},
+                    status={
+                        'code': 404,
+                        'message': 'Email or password is incorrect.'
+                    }
+                )
 
 
     # logs in either a candidate user or company user
@@ -79,15 +91,3 @@ class Login(View):
         # otherwise if the password does not match
         else:
             return Login.incorrect_email_or_password_json_response()
-
-
-    # returns a jsonify response saying the provided email or password is incorrect
-    @staticmethod
-    def incorrect_email_or_password_json_response():
-        return jsonify(
-            data={},
-            status={
-                'code': 404,
-                'message': 'Email or password is incorrect.'
-            }
-        )

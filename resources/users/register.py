@@ -123,17 +123,36 @@ class Register(View):
 
     def send_confirmation_email(self, user):
         try:
-            email = Mail(
-                from_email=os.environ.get('EMAIL_ADDRESS'),
-                to_emails=user['email'],
-                subject='test confirmation email',
-                html_content='<strong>Please confirm your email address</strong>'
-            )
 
-            mail_client = SendGridAPIClient(os.environ.get('SEND_GRID_MAIL_API_KEY'))
-            response = mail_client.send(email)
+            confirmiation_email_data = {
+                'personalizations': [
+                    {
+                        'to': [
+                            { 'email': user['email'] }
+                        ],
+                        'subject': 'Please Confirm Your Email Address'
+                    }
+                ],
+                'from': {
+                    'email': os.environ.get('EMAIL_ADDRESS')
+                },
+                'content': [
+                    {
+                        'type': 'text/plain',
+                        'value': ''
+                    }
+                ],
+                'template_id': os.environ.get('EMAIL_CONFIRMATION_TEMPLATE_ID'),
+                'dynamic_template_data': {
+                    'confirmation_url': os.environ.get('DEVELOPMENT_ORIGIN') + '/api/v1/users/email_confirmation/' + 
+                                        user['email_confirmation_code']
+                }
+            }
 
-            print('send grid response:', response)
+            send_grid_client = SendGridAPIClient(os.environ.get('SEND_GRID_MAIL_API_KEY'))
+            response = send_grid_client.send(confirmiation_email_data)
+            print('response:', response)
+
 
         except Exception as e:
             print('exception occurred while sending email:', e) 
