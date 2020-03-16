@@ -4,7 +4,7 @@ from .ping import Ping
 from .register import Register
 from .login import Login
 from .verify_email import VerifyEmail
-from .create_update_password_code import CreateUpdatePasswordCode
+from .create_forgotten_password_code import CreateForgottenPasswordCode
 
 
 
