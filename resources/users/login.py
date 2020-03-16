@@ -90,4 +90,10 @@ class Login(View):
 
         # otherwise if the password does not match
         else:
-            return Login.incorrect_email_or_password_json_response()
+            return jsonify(
+                data={},
+                status={
+                    'code': 404,
+                    'message': 'Email or password is incorrect.'
+                }
+            )

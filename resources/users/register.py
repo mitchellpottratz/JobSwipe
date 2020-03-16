@@ -4,6 +4,7 @@ from flask.views import View
 from playhouse.shortcuts import model_to_dict
 from peewee import DoesNotExist
 from werkzeug.utils import secure_filename
+
 from flask_bcrypt import generate_password_hash
 
 from sendgrid import SendGridAPIClient
