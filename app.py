@@ -16,7 +16,7 @@ from resources.users import *
 
 
 # creates instances of the server and database
-server = Server([Ping, Register, Login])
+server = Server([Ping, Register, Login, VerifyEmail])
 database = Database([BaseModel, User, CandidateUser, CompanyUser])
 
 
