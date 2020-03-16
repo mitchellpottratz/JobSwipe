@@ -3,9 +3,6 @@ from .base import BaseModel
 from flask_login import UserMixin
 import random
 
-from models.candidate_user import CandidateUser
-from models.company_user import CompanyUser
-
 
 ''' 
 This is the base user model which defines fields for both the CandidateUser
@@ -45,14 +42,6 @@ class User(BaseModel, UserMixin):
                 password_code_list.append(str(random.randint(1, 9)))
             
             update_password_code = ''.join(password_code_list)
-    
-            # if the update password code generated does not already exist for a user
-            if not (
-                CandidateUser.get(CandidateUser.update_password_code == update_password_code
-                )) or not (
-                    CompanyUser.get(CompanyUser.update_password_code == update_password_code)
-                ):
-                code_exists= False
 
             self.update_password_code = ''.join(password_code_list)
 

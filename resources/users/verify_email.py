@@ -3,7 +3,6 @@ from flask.views import View
 from playhouse.shortcuts import model_to_dict
 from peewee import DoesNotExist
 
-from models.user import User
 from models.company_user import CompanyUser
 from models.candidate_user import CandidateUser
 
