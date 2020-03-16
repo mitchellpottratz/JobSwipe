@@ -21,13 +21,28 @@ class ResetForgottenPassword(View):
     methods = ['POST']
 
     def dispatch_request(self):
-        return jsonify(
-            data={},
-            status={
-                'code': 200,
-                'message': 'Resource is working'
-            }
-        )
+        # checks if all required fields are present in the request body
+        try:
+            data = request.get_json()
+            update_password_code = data['update_password_code']
+            password = data['password']
+            confirmed_password = data['confirmed_password']
+        except TypeError:
+            return jsonify(
+                data={},
+                status={
+                    'code': 422,
+                    'message': 'Invalid request body.'
+                }
+            )
+        
+        # try:
+        #     candidate_user = CandidateUser.get(CandidateUser.update_password_code == update_password_code)
+
+        # except Does:
+
+
+    
 
 
 
