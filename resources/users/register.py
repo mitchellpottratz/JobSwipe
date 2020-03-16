@@ -144,7 +144,7 @@ class Register(View):
                 ],
                 'template_id': os.environ.get('EMAIL_CONFIRMATION_TEMPLATE_ID'),
                 'dynamic_template_data': {
-                    'confirmation_url': os.environ.get('DEVELOPMENT_ORIGIN') + '/api/v1/users/email_confirmation/' + 
+                    'confirmation_url': os.environ.get('DEVELOPMENT_ORIGIN') + '/api/v1/users/verify-email/' + 
                                         user['email_confirmation_code']
                 }
             }
