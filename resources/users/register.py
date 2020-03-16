@@ -151,11 +151,6 @@ class Register(View):
 
             send_grid_client = SendGridAPIClient(os.environ.get('SEND_GRID_MAIL_API_KEY'))
             response = send_grid_client.send(confirmiation_email_data)
-
-            print('response:', response)
-            print('response status code:', response.status_code)
-            print('response body:', response.body)
-            print('response headers:', response.headers)
             
         except Exception as e:
             print('exception occurred while sending email:', e) 
