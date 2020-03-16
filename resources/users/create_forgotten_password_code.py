@@ -15,8 +15,8 @@ from models.candidate_user import CandidateUser
 # Create Update Password Code Route
 # this route creates a update password code and send a email for the user to update their password
 class CreateForgottenPasswordCode(View):
-    path = '/users/create-update-password-code'
-    view_name = 'create_update_password_code'
+    path = '/users/create-forgotten-password-code'
+    view_name = 'create_forgotten_password_code'
     methods = ['POST']
 
 
