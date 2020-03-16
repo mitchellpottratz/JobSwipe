@@ -33,17 +33,14 @@ class User(BaseModel, UserMixin):
 
 
     # generate a random 15 digit code which is used to change a users password
-    def generate_update_password_code(self):
+    @staticmethod
+    def generate_update_password_code():
         password_code_list = []
         
-        code_exists = True
-        while code_exists:
-            for i in range(1, 15):
-                password_code_list.append(str(random.randint(1, 9)))
-            
-            update_password_code = ''.join(password_code_list)
+        for i in range(1, 15):
+            password_code_list.append(str(random.randint(1, 9)))
 
-            self.update_password_code = ''.join(password_code_list)
+        return ''.join(password_code_list)
 
 
 
