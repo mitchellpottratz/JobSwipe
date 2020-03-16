@@ -17,6 +17,7 @@ class User(BaseModel, UserMixin):
     password = CharField(max_length=155)
     email_confirmation_code = CharField(max_length=25, null=True)
     email_confirmed = BooleanField(default=False)
+    update_password_code = CharField(max_length=25, null=True)
     active = BooleanField(default=True)
     soft_delete = BooleanField(default=False)
 
