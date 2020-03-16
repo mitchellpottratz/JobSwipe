@@ -17,22 +17,49 @@ class VerifyEmail(View):
 
     def dispatch_request(self, email_confirmation_code):
         try:    
-            candidate_user = CandidateUser.select().where(
+            candidate_user = CandidateUser.get(
                 CandidateUser.email_confirmation_code == email_confirmation_code
-            ).first()
+            )
 
-            print('code exists for candidate user')
+            # verifies the candidate users email
+            candidate_user.email_confirmed = True
+            candidate_user.email_confirmation_code = None
+            candidate_user.save()
+
+            candidate_user_dict = model_to_dict(candidate_user)
+            del candidate_user_dict['password']
+
+            return jsonify(
+                data=candidate_user_dict,
+                status={
+                    'code': 204,
+                    'message': 'Email address confirmed.'
+                }
+            )
 
         # exception thrown if a candidate user with a matching email confirmation does not exists
         except DoesNotExist:
 
-
             try:
-                company_user = CompanyUser.select().where(
+                company_user = CompanyUser.get(
                     CompanyUser.email_confirmation_code == email_confirmation_code
-                ).first()
+                )
 
-                print('code exists for company user')
+                # verifies the company users email
+                company_user.email_confirmed = True
+                company_user.email_confirmation_code = None
+                company_user.save()
+
+                company_user_dict = model_to_dict(company_user)
+                del company_user_dict['password']
+
+                return jsonify(
+                    data=company_user_dict,
+                    status={
+                        'code': 204,
+                        'message': 'Email address confirmed.'
+                    }
+                )
 
             except DoesNotExist:
                 return jsonify(
