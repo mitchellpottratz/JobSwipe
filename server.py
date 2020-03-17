@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_login import LoginManager
 from flask_cors import CORS
+
 # allows flask to access enviroment variables
 from dotenv import load_dotenv
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env') 
@@ -17,11 +18,13 @@ class Server:
         self.origin = self.set_origin()    
         self.resources = resources
 
+        self.app.secret_key = os.environ['SECRET_KEY']
+
+        self.setup_cors()
+
         # configures the flask login manager
         self.login_manager = LoginManager()
         self.configure_login_manager()
-
-        self.app.secret_key = os.environ['SECRET_KEY']
 
         # sets the directory to where files are uploaded
         self.app.config['UPLOAD_FOLDER'] = '/media'
@@ -36,6 +39,9 @@ class Server:
             return os.environ['DEVELOPMENT_ORIGIN']
         else:
             return os.environ['PRODUCTON_ORIGIN']
+
+    def setup_cors(self):
+        CORS(self.app, resources={r"/*": {"origins": "*"}})
 
     def configure_login_manager(self):
         self.login_manager.init_app(self.app)

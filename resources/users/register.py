@@ -61,7 +61,7 @@ class Register(View):
 
                 # since company users and candidate users use different models they need to be
                 # created individually
-                if data['is_company_user'] == 'True':      
+                if data['is_company_user'] == 'true':      
                     new_company_user = self.register_company_user(data)
                     new_company_user_dict = model_to_dict(new_company_user)
                     del new_company_user_dict['password']
