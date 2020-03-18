@@ -21,9 +21,10 @@ class Login(View):
     
     def dispatch_request(self):
         data = request.get_json()
+        print('login request body:', data)
     
         # if the user loggin in is a candidate user
-        if data['is_candidate_user'] == 'True':
+        if data['is_candidate_user'] == True:
             try:
                 candidate_user = CandidateUser.get(CandidateUser.email == data['email'])
 
