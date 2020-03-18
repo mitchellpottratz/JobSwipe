@@ -17,11 +17,11 @@ class Login(View):
     path = '/users/login'
     view_name = 'users_login'
     methods = ['POST']
+    
 
     
     def dispatch_request(self):
         data = request.get_json()
-        print('login request body:', data)
     
         # if the user loggin in is a candidate user
         if data['is_candidate_user'] == True:
@@ -45,6 +45,7 @@ class Login(View):
         else:
             try:
                 company_user = CompanyUser.get(CompanyUser.email == data['email'])
+                print('company user found:', model_to_dict(company_user))
 
                 # logs in the candidate user and returns the response
                 response = self.login(company_user, data['password'])

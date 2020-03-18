@@ -18,7 +18,7 @@ class VerifyEmail(View):
         try:    
             candidate_user = CandidateUser.get(
                 CandidateUser.email_confirmation_code == email_confirmation_code
-            )
+            ) 
 
             # verifies the candidate users email
             candidate_user.email_confirmed = True
